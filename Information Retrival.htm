@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0072)https://cs.nyu.edu/courses/spring19/CSCI-UA.0480-009/priv/homework4.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<title>CSCI-UA.0480-006 Homework Number 4</title>
+	<meta name="generator" content="LibreOffice 5.3.6.1 (Linux)">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2019-01-22T17:04:19.804773249">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2018-08-01T16:46:14.804086413">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2018-02-09T10:33:30.853718646">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2018-01-18T17:09:16.504250826">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="meyers ">
+	<meta name="changed" content="2017-08-16T16:45:37.352848618">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="meyers ">
+	<meta name="changed" content="2017-08-16T12:01:19.521911259">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2017-02-22T13:34:03.472408676">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2017-02-22T13:17:03.804185979">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2016-10-18T11:21:18.819733288">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2016-10-03T16:49:47.251118819">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2016-09-29T11:34:59.612577266">
+	<meta name="created" content="00:00:00">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="changed" content="2016-02-24T17:00:18.034910817">
+	<meta name="changedby" content="Adam Meyers">
+	<meta name="CHANGEDBY" content="meyers ">
+	<style type="text/css">
+		h1 { color: #000000 }
+		p { color: #000000 }
+		h2 { color: #000000 }
+		h2.cjk { font-family: "Droid Sans Fallback" }
+		h2.ctl { font-family: "Lohit Hindi" }
+	</style>
+</head>
+<body lang="en-US" text="#000000" dir="ltr">
+<h1>Homework Number 4</h1>
+<h2 class="western">Due March 6, 2019</h2>
+<ol>
+	<li>
+<p style="margin-bottom: 0in">Do an Ad Hoc Information
+	Retrieval task using TF-IDF weights and cosine similarity scores.
+	Vectors should be based on all the words in the query, after
+	removing the members of a list of stop words. 
+	</p>
+	<ol>
+		<li>
+<p style="margin-bottom: 0in">Download (and unpack) the zip
+		file: <a href="http://cs.nyu.edu/courses/spring19/CSCI-UA.0480-009/Cranfield_collection_HW.zip">Cranfield_collection_HW.zip</a>
+		. It contains the following documents:</p>
+		<ol>
+			<li>
+<p style="margin-bottom: 0in">the Cranfield collection ---
+			also avaialble from
+			<a href="http://ir.dcs.gla.ac.uk/resources/test_collections/cran/">http://ir.dcs.gla.ac.uk/resources/test_collections/cran/</a>.
+			This includes a readme that describes the data, but further
+			details are provided here: 
+			</p>
+			<ol>
+				<li>
+<p style="margin-bottom: 0in">cran.qry -- <font color="#ff0000">contains
+				a set of 225 queries numbered 001 through 365, but referred to in
+				cranqrel below as 1 through 225 </font><font color="#000000">--
+				this is an important detail which, if missed, can make debugging
+				confusing.</font></p>
+				<ul>
+					<li>
+<p style="margin-bottom: 0in">Lines beginning with .I are
+					ids for the queries (001 to 365)</p>
+					</li><li>
+<p style="margin-bottom: 0in">Lines following .W are the
+					queries 
+					</p>
+				</li></ul>
+				</li><li>
+<p style="margin-bottom: 0in">cran.all.1400 -- contains
+				1400 abstracts of aerodynamics journal articles (the document
+				collection) 
+				</p>
+				<ul>
+					<li>
+<p style="margin-bottom: 0in">Lines beginning with .I are
+					ids for the abstracts 
+					</p>
+					</li><li>
+<p style="margin-bottom: 0in">Lines following .T are
+					titles 
+					</p>
+					</li><li>
+<p style="margin-bottom: 0in">Lines following .A are
+					authors 
+					</p>
+					</li><li>
+<p style="margin-bottom: 0in">Lines following .B are some
+					sort of bibliographic notation 
+					</p>
+					</li><li>
+<p style="margin-bottom: 0in">Lines following .W are the
+					abstracts 
+					</p>
+				</li></ul>
+				</li><li>
+<p style="margin-bottom: 0in">cranqrel is an answer key.
+				Each line consists of three numbers separated by a space 
+				</p>
+				<ul>
+					<li>
+<p style="margin-bottom: 0in">the first number is the
+					query id (1 through 225) --- convert 001 to 365 by position: 001
+					--&gt; 1, 002 --&gt; 2, 004 --&gt; 3, ... 365 --&gt; 225</p>
+					</li><li>
+<p style="margin-bottom: 0in">the second number is the
+					abstract id (1 through 1400) 
+					</p>
+					</li><li>
+<p style="margin-bottom: 0in">the third number is a number
+					(-1,1,2,3 or 4)</p>
+					<ul>
+						<li>
+<p style="margin-bottom: 0in">These numbers represent how
+						related the query is to the given abstract</p>
+						</li><li>
+<p style="margin-bottom: 0in">Unrelated query/abstract
+						pairs are not listed at all (they would get a score of 5):
+						There are 1836 lines in cranqrel. If all combinations were
+						listed, there would be 225 * 1400 = 315,000 lines.</p>
+						</li><li>
+<p style="margin-bottom: 0in">We will treat -1 as being
+						the same as 1. We suspect it means something like "the
+						best choice for the query", but the specs don't say.</p>
+					</li></ul>
+				</li></ul>
+			</li></ol>
+			</li><li>
+<p style="margin-bottom: 0in">A stoplist (currently written
+			in python) called stop_list.py -- you can use this list to
+			eliminate words that you should not bother including in your
+			vectors</p>
+			</li><li>
+<p style="margin-bottom: 0in">A scoring script
+			(cranfield_score.py) that you can use to score your results. 
+			</p>
+			</li><li>
+<p style="margin-bottom: 0in">A sample output file (
+			sample_cranfield_output.txt). You can use this as a guide to the
+			format of your output and also to test the scorer. It was created
+			by randomly changing the answer key. You should not seriously
+			compare it to your output file.</p>
+		</li></ol>
+		</li><li>
+<p style="margin-bottom: 0in">For each query, create a
+		feature vector representing the words in the query:</p>
+		<ol>
+			<li>
+<p style="margin-bottom: 0in">Calculate IDF scores for each
+			word in the collection of queries (after removing stop words,
+			punctuation and numbers)</p>
+			</li><li>
+<p style="margin-bottom: 0in">Count the number of instances
+			of each non-stop-word in each query</p>
+			</li><li>
+<p style="margin-bottom: 0in">The vector lists the TF-IDF
+			scores for the words in the vector</p>
+		</li></ol>
+		</li><li>
+<p style="margin-bottom: 0in">Compute the IDF scores for each
+		word in the collection of abstracts, after removing stop words,
+		punctuation and numbers.</p>
+		</li><li>
+<p style="margin-bottom: 0in">Count the number of instances
+		of each non-stop-word in each abstract</p>
+		</li><li>
+<p style="margin-bottom: 0in">For each query</p>
+		<ol>
+			<li>
+<p style="margin-bottom: 0in">For each abstract, 
+			</p>
+			<ol>
+				<li>
+<p style="margin-bottom: 0in">Create a vector representing
+				scores for words in the query, based on their TF-IDF values in
+				the abstract, e.g., if the only words contained in both query and
+				abstract are "chicken" and "fish", then
+				values in the vector representing these words would have non-zero
+				values and the other values in the vector would be zero. The
+				vector would be the same length as the query's vector.</p>
+				</li><li>
+<p style="margin-bottom: 0in">Calculate the cosine
+				similarity between vectors for query and abstract</p>
+			</li></ol>
+			</li><li>
+<p style="margin-bottom: 0in">Sort the abstracts by cosine
+			similarity scores. So for each query there should be a ranking of
+			all 1400 documents (see the sample output file which contains
+			225*1400=315,000 lines)</p>
+		</li></ol>
+		</li><li>
+<p style="margin-bottom: 0in">For tokenization, you can use
+		nltk if you want, but if you use some other system of tokenization,
+		please indicate what rules you use.</p>
+		</li><li>
+<p style="margin-bottom: 0in">Your final output should look
+		similar to cranqrel: the first column should be the query number,
+		the second column should be the abstract number, and the third
+		column should be the cosine similarity score. For each query, list
+		the abstracts in order from highest scoring to lowest scoring,
+		based on cosine-similarity. Note that your third column will be a
+		different sort of score than the answer key score -- that is OK.
+		Example line: 
+		</p>
+		<p>1 304 0.273 
+		</p>
+	</li></ol>
+	</li><li>
+<p style="margin-bottom: 0in">Systems will be evaluated by the
+	metric: Mean Average Precision based on the precision of your system
+	at each 10% recall level from 10 to 100%.</p>
+	<ol>
+		<li>
+<p style="margin-bottom: 0in">For each query, establish 10
+		cutoffs based on recall: 10%, 20%, ... 100% 
+		</p>
+		</li><li>
+<p style="margin-bottom: 0in">Average the precision of these
+		10 cutoffs.</p>
+		</li><li>
+<p style="margin-bottom: 0in">Average these precision scores
+		across all queries, ignoring a query if the system gets a recall
+		score of 0 or if there are no matching abstracts.</p>
+	</li></ol>
+	</li><li>
+<p style="margin-bottom: 0in">To score your system, use the
+	cranfield_score.py script (an implementation of MAP)</p>
+	<ol>
+		<li>
+<p style="margin-bottom: 0in">To run the script from the
+		command line type the following (cranqrel is the answer key)</p>
+		<ol>
+			<li>
+<p style="margin-bottom: 0in">python cranfield_score.py
+			cranqrel your_outputfile 
+			</p>
+			</li><li>
+<p style="margin-bottom: 0in">For example, if you type:
+			python cranfield_score.py cranqrel sample_cranfield_output.txt 
+			</p>
+			<ol>
+				<li>
+<p style="margin-bottom: 0in">You will get the following
+				output: 
+				</p>
+				<ul>
+					<li>
+<p style="margin-bottom: 0in">Average MAP is:
+					0.362325230638 
+					</p>
+				</li></ul>
+				</li><li>
+<p style="margin-bottom: 0in">Typical MAP scores are
+				actually lower than this sample. About 20% is normal for this
+				task (although higher scores are possible). Ultimate grades will
+				be based on the results of the class. A general rule of thumb for
+				determining if your system is working is: if your MAP score is in
+				double digits, it is probably working OK. If you are getting a
+				score of less than 3% MAP, there is probably something wrong.
+				[Most likely, it is a format error.]</p>
+			</li></ol>
+			</li><li>
+<p style="margin-bottom: 0in">The scoring program has an
+			optional feature that prints out the scores for each query (to
+			help with debugging), simply add an additional argument True
+			(setting trace to True), e.g.,</p>
+		</li></ol>
+	</li></ol>
+</li></ol>
+<ul>
+	<ul>
+		<ul>
+			<ul>
+				<li>
+<p style="margin-bottom: 0in">python cranfield_score.py
+				cranqrel your_outputfile True</p>
+			</li></ul>
+		</ul>
+	</ul>
+</ul>
+<ol start="5">
+	<li>
+<p style="margin-bottom: 0in">Possible extensions to make the
+	system work better</p>
+	<ol>
+		<li>
+<p style="margin-bottom: 0in">Add additional features:
+		incorporate stemming (e.g., treat plural/singular forms as single
+		terms)</p>
+		</li><li>
+<p style="margin-bottom: 0in">Determine if there is a
+		correlation between the TF-IDF based ranks and the relevance score
+		ranks and find a way to predict the rankings, or to simplify the
+		rankings and predict the simplified rankings. 
+		</p>
+		</li><li>
+<p style="margin-bottom: 0in">We initially assume a simple
+		method of counting term frequency: a straight count of the number
+		of times a term occurs in a document. However, in practice, there
+		is usually some adjustment for the length of the document, for
+		example: 
+		</p>
+		<ol>
+			<li>
+<p style="margin-bottom: 0in">Divide this count by the
+			number of words in the document</p>
+			</li><li>
+<p style="margin-bottom: 0in">Use the logarithm of the term
+			frequency</p>
+			</li><li>
+<p style="margin-bottom: 0in">Use 1 if the term exists in
+			the document and 0 if it does not</p>
+			</li><li>
+<p style="margin-bottom: 0in">Combine some of the above
+			methods together</p>
+			</li><li>
+<p style="margin-bottom: 0in">Try more than one of these
+			methods and determine which method achieves the highest scores.</p>
+		</li></ol>
+		</li><li>
+<p>Other interesting extensions.</p>
+	</li></ol>
+	</li><li>
+<p>Grading is based on your final MAP score and any extensions
+	that you made (see 5).</p>
+	</li><li>
+<p>Submit the following to GradeScope in a zip file called
+	NetID-HW4.zip, e.g., alm4-HW4.zip. The zip file should contain:</p>
+</li></ol>
+<ul>
+	<ul>
+		<li>
+<p>Your source code 
+		</p>
+		</li><li>
+<p>Instructions for running your system
+		(NetID_README_HW4.txt)</p>
+		</li><li>
+<p>Your output file (<b>output.txt</b>) in the format
+		described above. It should look very similar to cranqrel and you
+		should make sure that the scoring program works on it. The main
+		differences are: 
+		</p>
+		<ul>
+			<li>
+<p>there should be 225*1400=315,000 lines in the file (for
+			all query/summary combinations)</p>
+			</li><li>
+<p>your cosine similarity score should be the third column
+			instead of a -1 to 4 ranking</p>
+		</li></ul>
+	</li></ul>
+</ul>
+<p><br>
+<br>
+
+</p>
+
+</body></html>
